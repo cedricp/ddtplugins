@@ -132,7 +132,7 @@ class CardProg(gui.QDialog):
         self.cancelbutton = gui.QPushButton("CANCEL")
 
         self.algocheck = gui.QCheckBox("Algo 2")
-        self.algocheck.setChecked(True)
+        self.algocheck.setChecked(False)
 
         self.learnbutton.clicked.connect(self.learn_action)
         self.validatebutton.clicked.connect(self.validate_action)
@@ -227,8 +227,13 @@ class CardProg(gui.QDialog):
             return
         self.after_sale_request.send_request({u'Code APV': apv})
 
+    def enable_buttons(self, enable):
+        self.learnbutton.setEnabled(enable)
+        self.validatebutton.setEnabled(enable)
+        self.cancelbutton.setEnabled(enable)
+
     def check_apv_status(self):
-        key_bits_status_values = self.key_bits_status.send_request({}, "62 01 64 00 00 00 00 00 00 00 00 00 00 00 00")
+        key_bits_status_values = self.key_bits_status.send_request({}, "61 06 03 03 02 00 00 00 08 00 00 91 03")
 
         value_apv_ok = key_bits_status_values[u'VSC Code APV_Reconnu']
         value_apv_reaff = key_bits_status_values[u'VSC ModeAPV_ReaffArmé']
@@ -236,33 +241,28 @@ class CardProg(gui.QDialog):
 
         if value_apv_ok == '0':
             self.apv_status.setText("<font color='red'>PIN CODE NOT RECOGNIZED</font>")
-            self.learnbutton.setEnabled(False)
-            self.validatebutton.setEnabled(False)
-            self.cancelbutton.setEnabled(False)
+
+        if value_apv_reaff == '1':
+            self.apv_status.setText("<font color='green'>PIN CODE OK / KEY LEARNING</font>")
+            self.enable_buttons(True)
+            return
+        elif value_apv_uch_reaff == '1':
+            self.apv_status.setText("<font color='green'>PIN CODE OK / UCH LEARNING</font>")
+            self.enable_buttons(True)
             return
         else:
-            self.learnbutton.setEnabled(True)
-            self.validatebutton.setEnabled(True)
-            self.cancelbutton.setEnabled(True)
-            if value_apv_reaff == '1':
-                self.apv_status.setText("<font color='green'>PIN CODE OK / KEY LEARNING</font>")
-                return
-            elif value_apv_uch_reaff == '1':
-                self.apv_status.setText("<font color='green'>PIN CODE OK / UCH LEARNING</font>")
-                return
-            else:
-                self.apv_status.setText("<font color='green'>PIN CODE OK</font>")
-                return
+            self.apv_status.setText("<font color='green'>PIN CODE OK</font>")
+            self.enable_buttons(True)
+            return
 
-        self.learnbutton.setEnabled(False)
-        self.validatebutton.setEnabled(False)
-        self.cancelbutton.setEnabled(False)
+        self.enable_buttons(False)
+
         self.apv_status.setText("<font color='red'>WEIRD UCH STATE</font>")
 
     def check_num_key_learnt(self):
-        key_bytes_status_value = self.key_bytes_status.send_request({}, "61 08 00 00 00 00 00 00 00 00 00 00 00 00 00 "\
-                                                                        "00 00 00 00 00 00 00 00 "\
-                                                                        "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")
+        key_bytes_status_value = self.key_bytes_status.send_request({}, "61 08 00 00 00 00 00 00 0A 00 00 00 00 00 00 "
+                                                                        "00 00 00 00 00 00 00 00 00 00 02 00 00 01 2C "
+                                                                        "00 00 01 2C 00 00 2C 00 00 01 2C")
 
         num_key_learnt = key_bytes_status_value[u'VSC NbTotalDeBadgeAppris']
         current_key_ide = key_bytes_status_value[u'VSC Code_IDE']
