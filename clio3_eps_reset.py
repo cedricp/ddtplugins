@@ -42,6 +42,7 @@ class Virginizer(gui.QDialog):
             self.finished()
 
     def check_virgin_status(self):
+        self.start_diag_session()
         virigin_check_request = self.clio_eps.requests[u'RDBLI - System Frame']
         virgin_check_values = virigin_check_request.send_request({}, "62 01 64 00 00 00 00 00 00 00 00 00 00 00 00"\
                                                                  "00 00 00 00 00 00 00 00 00")
@@ -73,7 +74,18 @@ class Virginizer(gui.QDialog):
 
         options.elm.start_session_can(sds_stream)
 
+    def start_diag_session(self):
+        sds_request = self.clio_eps.requests[u"APV"]
+        sds_stream = " ".join(sds_request.build_data_stream({}))
+
+        if options.simulation_mode:
+            print "SdSAPV stream", sds_stream
+            return
+
+        options.elm.start_session_can(sds_stream)
+
     def reset_ecu(self):
+        self.start_diag_session_fb()
         reset_request = self.clio_eps.requests[u"WDBLI - Erase of Dongle_ID code"]
         request_response = reset_request.send_request()
 

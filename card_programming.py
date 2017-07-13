@@ -233,7 +233,7 @@ class CardProg(gui.QDialog):
         self.cancelbutton.setEnabled(enable)
 
     def check_apv_status(self):
-        key_bits_status_values = self.key_bits_status.send_request({}, "61 06 03 03 02 00 00 00 08 00 00 91 03")
+        key_bits_status_values = self.key_bits_status.send_request({}, "61 06 21 21 20 00 00 00 08 00 00 80 03")
 
         value_apv_ok = key_bits_status_values[u'VSC Code APV_Reconnu']
         value_apv_reaff = key_bits_status_values[u'VSC ModeAPV_ReaffArmé']
