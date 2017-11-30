@@ -99,6 +99,7 @@ class CardProg(gui.QDialog):
     def __init__(self):
         super(CardProg, self).__init__()
         options.debug = True
+        self.apvok = False
         self.megane_ecu = ecu.Ecu_file(ecufile, True)
         self.start_session_request = self.megane_ecu.requests[u'Start Diagnostic Session']
         self.after_sale_request = self.megane_ecu.requests[u'ACCEDER AU MODE APRES-VENTE']
@@ -127,7 +128,6 @@ class CardProg(gui.QDialog):
         label = gui.QLabel("<font color='red'>MEGANE II CARD PROGRAMMING<br>EXPERIMENTAL : NOT TESTED YET</font>")
         label.setAlignment(core.Qt.AlignHCenter)
         self.learnbutton = gui.QPushButton("LEARN")
-        self.validatebutton = gui.QPushButton("VALIDATE")
         self.validatebutton = gui.QPushButton("VALIDATE")
         self.cancelbutton = gui.QPushButton("CANCEL")
 
@@ -204,7 +204,7 @@ class CardProg(gui.QDialog):
         else:
             reply = options.elm.request(self.reserved_frame_request.sentbytes)
 
-        if reply.startswith('7F') or reply == 'WRONG RESPONSE':
+        if reply.startswith('7F') or reply.startswith('WRONG'):
             options.main_window.logview.append("Cannot get ISK, check connections and UCH compatibility")
             return
 
@@ -241,23 +241,26 @@ class CardProg(gui.QDialog):
 
         if value_apv_ok == '0':
             self.apv_status.setText("<font color='red'>PIN CODE NOT RECOGNIZED</font>")
+            self.apvok = False
+            self.enable_buttons(False)
+            return
 
         if value_apv_reaff == '1':
             self.apv_status.setText("<font color='green'>PIN CODE OK / KEY LEARNING</font>")
             self.enable_buttons(True)
+            self.apvok = True
             return
+
         elif value_apv_uch_reaff == '1':
             self.apv_status.setText("<font color='green'>PIN CODE OK / UCH LEARNING</font>")
             self.enable_buttons(True)
-            return
-        else:
-            self.apv_status.setText("<font color='green'>PIN CODE OK</font>")
-            self.enable_buttons(True)
+            self.apvok = True
             return
 
+        self.apvok = False
         self.enable_buttons(False)
 
-        self.apv_status.setText("<font color='red'>WEIRD UCH STATE</font>")
+        self.apv_status.setText("<font color='red'>UCH NOT READY</font>")
 
     def check_num_key_learnt(self):
         key_bytes_status_value = self.key_bytes_status.send_request({}, "61 08 00 00 00 00 00 00 0A 00 00 00 00 00 00 "
