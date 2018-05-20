@@ -23,7 +23,7 @@ class Virginizer(gui.QDialog):
         infos = gui.QLabel(_("LAGUNA III UCH VIRGINIZER<br><font color='red'>THIS PLUGIN WILL ERASE YOUR UCH<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("Check UCH Virgin"))
-        self.status_check = gui.QLabel("Waiting")
+        self.status_check = gui.QLabel(_("Waiting"))
         self.status_check.setAlignment(core.Qt.AlignHCenter)
         self.virginize_button = gui.QPushButton(_("Virginize UCH"))
         layout.addWidget(infos)
