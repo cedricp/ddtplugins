@@ -52,7 +52,7 @@ class Virginizer(gui.QDialog):
         status_vinout.setAlignment(core.Qt.AlignHCenter)
         self.vin_output = gui.QLineEdit()
 
-        write_vin_button = gui.QPushButton("Write VIN")
+        write_vin_button = gui.QPushButton(_("Write VIN"))
         write_vin_button.clicked.connect(self.write_vin)
 
         layout.addWidget(infos)
