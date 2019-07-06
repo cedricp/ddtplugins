@@ -2,9 +2,31 @@
 
 # (c) 2017
 
+import platform
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+try:
+    import PyQt5.QtGui as gui
+    import PyQt5.QtCore as core
+    import PyQt5.QtWidgets as widgets
+    if platform.system() == 'Darwin':
+        import PyQt5.QtWebEngine as webkit
+        import PyQt5.QtWebEngineWidgets as webkitwidgets
+    else:
+        import PyQt5.QtWebKit as webkit
+        import PyQt5.QtWebKitWidgets as webkitwidgets
+    def utf8(string):
+        return string
+    qt5 = True
+except:
+    import PyQt4.QtGui as gui
+    import PyQt4.QtGui as widgets
+    import PyQt4.QtCore as core
+    import PyQt4.QtWebKit as webkit
+    import PyQt4.QtWebKit as webkitwidgets
+    def utf8(string):
+        return unicode(string.toUtf8(), encoding="UTF-8")
+    qt5 = False
+
 import ecu
 import options
 import elm
@@ -16,19 +38,19 @@ category = _("Airbag Tools")
 need_hw = True
 ecufile = "RSAT4_ACU_eng_v15_20150511T131328"
 
-class Virginizer(gui.QDialog):
+class Virginizer(widgets.QDialog):
     def __init__(self):
         super(Virginizer, self).__init__()
         self.airbag_ecu = ecu.Ecu_file(ecufile, True)
-        layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("TWINGO III/ZOE/DOKKER/DUSTER ph2/TRAFIC III/CAPTUR/LODGY ph1/2<br>"
+        layout = widgets.QVBoxLayout()
+        infos = widgets.QLabel(_("TWINGO III/ZOE/DOKKER/DUSTER ph2/TRAFIC III/CAPTUR/LODGY ph1/2<br>"
                            "AIRBAG VIRGINIZER<br><font color='red'>THIS PLUGIN WILL UNLOCK AIRBAG CRASH DATA<br>"
                            "GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
-        check_button = gui.QPushButton(_("Check ACU Virgin"))
-        self.status_check = gui.QLabel(_("Waiting"))
+        check_button = widgets.QPushButton(_("Check ACU Virgin"))
+        self.status_check = widgets.QLabel(_("Waiting"))
         self.status_check.setAlignment(core.Qt.AlignHCenter)
-        self.virginize_button = gui.QPushButton(_("Virginize ACU"))
+        self.virginize_button = widgets.QPushButton(_("Virginize ACU"))
         layout.addWidget(infos)
         layout.addWidget(check_button)
         layout.addWidget(self.status_check)

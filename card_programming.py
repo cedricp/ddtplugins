@@ -4,9 +4,31 @@
 # (c) 2017
 # This is an example plugin
 
+import platform
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+try:
+    import PyQt5.QtGui as gui
+    import PyQt5.QtCore as core
+    import PyQt5.QtWidgets as widgets
+    if platform.system() == 'Darwin':
+        import PyQt5.QtWebEngine as webkit
+        import PyQt5.QtWebEngineWidgets as webkitwidgets
+    else:
+        import PyQt5.QtWebKit as webkit
+        import PyQt5.QtWebKitWidgets as webkitwidgets
+    def utf8(string):
+        return string
+    qt5 = True
+except:
+    import PyQt4.QtGui as gui
+    import PyQt4.QtGui as widgets
+    import PyQt4.QtCore as core
+    import PyQt4.QtWebKit as webkit
+    import PyQt4.QtWebKit as webkitwidgets
+    def utf8(string):
+        return unicode(string.toUtf8(), encoding="UTF-8")
+    qt5 = False
+
 import ecu
 import elm
 import options
@@ -97,7 +119,7 @@ def get_isk(ecu_response):
     return ecu_response[19 * 2:25 * 2]
 
 
-class CardProg(gui.QDialog):
+class CardProg(widgets.QDialog):
     def __init__(self):
         super(CardProg, self).__init__()
         options.debug = True
@@ -115,25 +137,25 @@ class CardProg(gui.QDialog):
         self.ecu_connect()
         self.start_diag_session()
 
-        self.apv_access_button = gui.QPushButton(_("ENTER AFTER SALE MODE"))
+        self.apv_access_button = widgets.QPushButton(_("ENTER AFTER SALE MODE"))
         self.apv_access_button.clicked.connect(self.set_apv_from_input)
-        self.pininput = gui.QLineEdit()
+        self.pininput = widgets.QLineEdit()
         self.pininput.setText("0" * 12)
         self.pininput.setInputMask("H" * 12)
-        self.iskoutput = gui.QLineEdit()
+        self.iskoutput = widgets.QLineEdit()
         self.iskoutput.setInputMask("H" * 12)
-        self.numkeys_label = gui.QLabel("0")
-        self.currentcardide = gui.QLineEdit()
+        self.numkeys_label = widgets.QLabel("0")
+        self.currentcardide = widgets.QLineEdit()
         self.currentcardide.setReadOnly(True)
-        self.apv_status = gui.QLabel("")
+        self.apv_status = widgets.QLabel("")
         self.apv_status.setAlignment(core.Qt.AlignHCenter)
-        label = gui.QLabel(_("<font color='red'>MEGANE II CARD PROGRAMMING<br>EXPERIMENTAL : NOT TESTED YET</font>"))
+        label = widgets.QLabel(_("<font color='red'>MEGANE II CARD PROGRAMMING<br>EXPERIMENTAL : NOT TESTED YET</font>"))
         label.setAlignment(core.Qt.AlignHCenter)
-        self.learnbutton = gui.QPushButton(_("LEARN"))
-        self.validatebutton = gui.QPushButton(_("VALIDATE"))
-        self.cancelbutton = gui.QPushButton(_("CANCEL"))
+        self.learnbutton = widgets.QPushButton(_("LEARN"))
+        self.validatebutton = widgets.QPushButton(_("VALIDATE"))
+        self.cancelbutton = widgets.QPushButton(_("CANCEL"))
 
-        self.algocheck = gui.QCheckBox(_("Algo 2"))
+        self.algocheck = widgets.QCheckBox(_("Algo 2"))
         self.algocheck.setChecked(False)
 
         self.learnbutton.clicked.connect(self.learn_action)
@@ -142,18 +164,18 @@ class CardProg(gui.QDialog):
         self.iskoutput.textChanged.connect(self.calculate_pin)
         self.algocheck.toggled.connect(self.calculate_pin)
 
-        layout = gui.QGridLayout()
+        layout = widgets.QGridLayout()
         layout.addWidget(label, 0, 0, 1, 0)
-        layout.addWidget(gui.QLabel(_("ISK")), 1, 0)
+        layout.addWidget(widgets.QLabel(_("ISK")), 1, 0)
         layout.addWidget(self.iskoutput, 1, 1)
-        layout.addWidget(gui.QLabel(_("PIN")), 2, 0)
+        layout.addWidget(widgets.QLabel(_("PIN")), 2, 0)
         layout.addWidget(self.pininput, 2, 1)
         layout.addWidget(self.algocheck, 3, 1)
         layout.addWidget(self.apv_access_button, 4, 0, 1, 0)
         layout.addWidget(self.apv_status, 5, 0, 1, 0)
-        layout.addWidget(gui.QLabel(_("Num key learnt")), 6, 0)
+        layout.addWidget(widgets.QLabel(_("Num key learnt")), 6, 0)
         layout.addWidget(self.numkeys_label, 6, 1)
-        layout.addWidget(gui.QLabel(_("CARD IDE")), 7, 0)
+        layout.addWidget(widgets.QLabel(_("CARD IDE")), 7, 0)
         layout.addWidget(self.currentcardide, 7, 1)
         layout.addWidget(self.learnbutton, 8, 0, 1, 0)
         layout.addWidget(self.validatebutton, 9, 0)
@@ -174,7 +196,11 @@ class CardProg(gui.QDialog):
         self.tester_timer.start()
 
     def calculate_pin(self):
-        ISK = str(self.iskoutput.text().toAscii())
+        if qt5:
+            ISK = str(self.iskoutput.text().encode("ascii", errors='ignore'))
+        else:
+            ISK = str(self.iskoutput.text().toAscii())
+
         if len(ISK) == 12:
             if self.algocheck.checkState():
                 PIN = a8_2(ISK)
@@ -224,7 +250,10 @@ class CardProg(gui.QDialog):
         self.check_num_key_learnt()
 
     def set_apv_from_input(self):
-        apv = str(self.pininput.text().toAscii())
+        if qt5:
+            apv = str(self.pininput.text().encode("ascii", errors='ignore'))
+        else:
+            apv = str(self.pininput.text().toAscii())
         if len(apv) != 12:
             return
         self.after_sale_request.send_request({u'Code APV': apv})
