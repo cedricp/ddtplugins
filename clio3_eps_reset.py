@@ -2,8 +2,31 @@
 
 # (c) 2017
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+import platform
+
+try:
+    import PyQt5.QtGui as gui
+    import PyQt5.QtCore as core
+    import PyQt5.QtWidgets as widgets
+    if platform.system() == 'Darwin':
+        import PyQt5.QtWebEngine as webkit
+        import PyQt5.QtWebEngineWidgets as webkitwidgets
+    else:
+        import PyQt5.QtWebKit as webkit
+        import PyQt5.QtWebKitWidgets as webkitwidgets
+    def utf8(string):
+        return string
+    qt5 = True
+except:
+    import PyQt4.QtGui as gui
+    import PyQt4.QtGui as widgets
+    import PyQt4.QtCore as core
+    import PyQt4.QtWebKit as webkit
+    import PyQt4.QtWebKit as webkitwidgets
+    def utf8(string):
+        return unicode(string.toUtf8(), encoding="UTF-8")
+    qt5 = False
+
 import ecu
 import options
 import crcmod
@@ -27,32 +50,32 @@ def calc_crc(vin=None):
     # Convert it to big endian
     return crcle[2:4] + crcle[0:2]
 
-class Virginizer(gui.QDialog):
+class Virginizer(widgets.QDialog):
     def __init__(self):
         super(Virginizer, self).__init__()
         self.clio_eps = ecu.Ecu_file(ecufile, True)
-        layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("Modus/Clio III EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+        layout = widgets.QVBoxLayout()
+        infos = widgets.QLabel(_("Modus/Clio III EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
-        check_button = gui.QPushButton(_("BLANK STATUS & VIN READ"))
-        self.status_check = gui.QLabel(_("Waiting"))
+        check_button = widgets.QPushButton(_("BLANK STATUS & VIN READ"))
+        self.status_check = widgets.QLabel(_("Waiting"))
         self.status_check.setAlignment(core.Qt.AlignHCenter)
-        self.virginize_button = gui.QPushButton(_("Virginize EPS"))
+        self.virginize_button = widgets.QPushButton(_("Virginize EPS"))
 
         self.setLayout(layout)
         self.virginize_button.setEnabled(False)
         self.virginize_button.clicked.connect(self.reset_ecu)
         check_button.clicked.connect(self.check_virgin_status)
-        status_vin = gui.QLabel(_("VIN - READ"))
+        status_vin = widgets.QLabel(_("VIN - READ"))
         status_vin.setAlignment(core.Qt.AlignHCenter)
-        self.vin_input = gui.QLineEdit()
+        self.vin_input = widgets.QLineEdit()
         self.vin_input.setReadOnly(True)
 
-        status_vinout = gui.QLabel(_("VIN - WRITE"))
+        status_vinout = widgets.QLabel(_("VIN - WRITE"))
         status_vinout.setAlignment(core.Qt.AlignHCenter)
-        self.vin_output = gui.QLineEdit()
+        self.vin_output = widgets.QLineEdit()
 
-        write_vin_button = gui.QPushButton(_("Write VIN"))
+        write_vin_button = widgets.QPushButton(_("Write VIN"))
         write_vin_button.clicked.connect(self.write_vin)
 
         layout.addWidget(infos)
@@ -76,7 +99,10 @@ class Virginizer(gui.QDialog):
 
     def write_vin(self):
         try:
-            vin = str(self.vin_output.text().toAscii()).upper()
+            if qt5:
+                vin = str(self.vin_output.text().encode("ascii", errors='"ignore')).upper()
+            else:
+                vin = str(self.vin_output.text().toAscii()).upper()
             self.vin_output.setText(vin)
         except:
             self.status_check.setText(_("<font color='red'>VIN - INVALID</font>"))
