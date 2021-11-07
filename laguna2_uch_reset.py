@@ -3,11 +3,10 @@
 # (c) 2017
 # This is an example plugin
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+import PyQt5.QtWidgets as gui
+import PyQt5.QtCore as core
 import ecu
 import options
-import elm
 
 _ = options.translator('ddt4all')
 
@@ -70,7 +69,7 @@ class Virginizer(gui.QDialog):
         sds_request = self.laguna_uch.requests[u"Start Diagnostic Session"]
         sds_stream = " ".join(sds_request.build_data_stream({u'Session Name': u'Etude'}))
         if options.simulation_mode:
-            print "SdSA stream", sds_stream
+            print("SdSA stream", sds_stream)
             return
         options.elm.start_session_iso(sds_stream)
 
@@ -78,7 +77,7 @@ class Virginizer(gui.QDialog):
         sds_request = self.laguna_uch.requests[u"Start Diagnostic Session"]
         sds_stream = " ".join(sds_request.build_data_stream({u'Session Name': u'APV'}))
         if options.simulation_mode:
-            print "SdSS stream", sds_stream
+            print("SdSS stream", sds_stream)
             return
         options.elm.request(sds_stream)
 

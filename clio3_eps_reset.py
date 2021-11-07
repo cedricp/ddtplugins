@@ -2,8 +2,8 @@
 
 # (c) 2017
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+import PyQt5.QtWidgets as gui
+import PyQt5.QtCore as core
 import ecu
 import options
 import crcmod
@@ -113,7 +113,7 @@ class Virginizer(gui.QDialog):
             virgin_status = virgin_check_values[u"Dongle status"]
 
             if options.debug:
-                print virgin_status
+                print(virgin_status)
 
             if virgin_status == u'Système VIERGE - Aucun code mémorisé':
                 self.virginize_button.setEnabled(False)
@@ -131,7 +131,7 @@ class Virginizer(gui.QDialog):
         sds_stream = " ".join(sds_request.build_data_stream({}))
 
         if options.simulation_mode:
-            print "SdSFB stream", sds_stream
+            print("SdSFB stream", sds_stream)
             return
 
         options.elm.start_session_can(sds_stream)
@@ -141,7 +141,7 @@ class Virginizer(gui.QDialog):
         sds_stream = " ".join(sds_request.build_data_stream({}))
 
         if options.simulation_mode:
-            print "SdSC0 stream", sds_stream
+            print("SdSC0 stream", sds_stream)
             return
 
         options.elm.start_session_can(sds_stream)

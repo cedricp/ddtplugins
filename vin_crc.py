@@ -3,11 +3,11 @@
 # Plugin to compute CRC from VIN
 # (c) 2017
 
-import crcmod
+import crcmod.predefined
 from binascii import unhexlify
-
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+from binascii import hexlify
+import PyQt5.QtWidgets as gui
+import PyQt5.QtCore as core
 import options
 
 _ = options.translator('ddt4all')
@@ -18,12 +18,13 @@ category = _("VIN")
 need_hw = False
 
 def calc_crc(vin=None):
-    VIN=vin.encode("hex")
+    VIN=hexlify(bytes(vin, 'utf-8'))
     VININT=unhexlify(VIN)
 
-    crc16 = crcmod.predefined.Crc('x-25')
-    crc16.update(VININT)
-    crcle = crc16.hexdigest()
+    crc16 = crcmod.predefined.mkCrcFun('x-25')
+    crcle = hex(crc16(VININT))[2:].upper().zfill(4)
+    print(crcle)
+#    crcle = crc16.hexdigest()
     # Seems that computed CRC is returned in little endian way
     # Convert it to big endian
     return crcle[2:4] + crcle[0:2]
@@ -47,7 +48,7 @@ class CrcWidget(gui.QDialog):
         self.output.setReadOnly(True)
 
     def recalc(self):
-        vin = str(self.input.text().toAscii()).upper()
+        vin = str(self.input.text()).upper()
         crc = calc_crc(vin)
         self.output.setText('%s' % crc)
 

@@ -2,11 +2,10 @@
 
 # (c) 2017
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+import PyQt5.QtWidgets as gui
+import PyQt5.QtCore as core
 import ecu
 import options
-import elm
 
 _ = options.translator('ddt4all')
 
@@ -72,7 +71,7 @@ class Virginizer(gui.QDialog):
         sds_request = self.megane_eps.requests[u"SDS - Start Diagnostic Session $FA"]
         sds_stream = " ".join(sds_request.build_data_stream({}))
         if options.simulation_mode:
-            print "SdSFA stream", sds_stream
+            print("SdSFA stream", sds_stream)
             return
         options.elm.start_session_can(sds_stream)
 
@@ -80,7 +79,7 @@ class Virginizer(gui.QDialog):
         sds_request = self.megane_eps.requests[u"SDS - Start Diagnostic Session $C0"]
         sds_stream = " ".join(sds_request.build_data_stream({}))
         if options.simulation_mode:
-            print "SdSC0 stream", sds_stream
+            print("SdSC0 stream", sds_stream)
             return
         options.elm.start_session_can(sds_stream)
 

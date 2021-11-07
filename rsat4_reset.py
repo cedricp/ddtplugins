@@ -3,11 +3,10 @@
 # (c) 2017
 
 
-import PyQt4.QtGui as gui
-import PyQt4.QtCore as core
+import PyQt5.QtWidgets as gui
+import PyQt5.QtCore as core
 import ecu
 import options
-import elm
 
 _ = options.translator('ddt4all')
 
@@ -69,7 +68,7 @@ class Virginizer(gui.QDialog):
 
         sds_stream = " ".join(sds_request.build_data_stream({u'Session Name': u'extendedDiagnosticSession'}))
         if options.simulation_mode:
-            print "SdSEX stream", sds_stream
+            print("SdSEX stream", sds_stream)
             return
         options.elm.start_session_can(sds_stream)
 
