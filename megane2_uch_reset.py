@@ -3,8 +3,9 @@
 # (c) 2017
 # This is an example plugin
 
-import PyQt5.QtWidgets as gui
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+
 import ecu
 import options
 
@@ -20,7 +21,8 @@ class Virginizer(gui.QDialog):
         super(Virginizer, self).__init__()
         self.megane_uch = ecu.Ecu_file("UCH_84_J84_03_60", True)
         layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("MEGANE II UCH VIRGINIZER<br><font color='red'>THIS PLUGIN WILL ERASE YOUR UCH<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+        infos = gui.QLabel(
+            _("MEGANE II UCH VIRGINIZER<br><font color='red'>THIS PLUGIN WILL ERASE YOUR UCH<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("Check UCH Virgin"))
         self.status_check = gui.QLabel(_("Waiting"))

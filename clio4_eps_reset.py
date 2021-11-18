@@ -2,8 +2,9 @@
 
 # (c) 2017
 
-import PyQt5.QtWidgets as gui
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+
 import ecu
 import options
 
@@ -20,7 +21,8 @@ class Virginizer(gui.QDialog):
         super(Virginizer, self).__init__()
         self.clio_eps = ecu.Ecu_file(ecufile, True)
         layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("Clio IV EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+        infos = gui.QLabel(
+            _("Clio IV EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("Check EPS Virgin"))
         self.status_check = gui.QLabel(_("Waiting"))

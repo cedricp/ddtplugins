@@ -3,8 +3,9 @@
 # (c) 2017
 # This is an example plugin
 
-import PyQt5.QtWidgets as gui
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+
 import ecu
 import options
 
@@ -15,12 +16,14 @@ category = _("UCH Tools")
 need_hw = True
 ecufile = "UCH___M2S_X74_et_X73"
 
+
 class Virginizer(gui.QDialog):
     def __init__(self):
         super(Virginizer, self).__init__()
         self.laguna_uch = ecu.Ecu_file(ecufile, True)
         layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("LAGUNA II UCH VIRGINIZER<br><font color='red'>THIS PLUGIN WILL ERASE YOUR UCH<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+        infos = gui.QLabel(
+            _("LAGUNA II UCH VIRGINIZER<br><font color='red'>THIS PLUGIN WILL ERASE YOUR UCH<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("Check UCH Virgin"))
         self.status_check = gui.QLabel(_("Waiting"))

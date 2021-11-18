@@ -2,12 +2,14 @@
 
 # (c) 2017
 
-import PyQt5.QtWidgets as gui
+from binascii import unhexlify
+
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+import crcmod
+
 import ecu
 import options
-import crcmod
-from binascii import unhexlify
 
 _ = options.translator('ddt4all')
 
@@ -16,9 +18,10 @@ category = _("EPS Tools")
 need_hw = True
 ecufile = "DAE_J77_X85_Gen2___v3.7"
 
+
 def calc_crc(vin=None):
-    VIN=vin.encode("hex")
-    VININT=unhexlify(VIN)
+    VIN = vin.encode("hex")
+    VININT = unhexlify(VIN)
 
     crc16 = crcmod.predefined.Crc('x-25')
     crc16.update(VININT)
@@ -27,12 +30,14 @@ def calc_crc(vin=None):
     # Convert it to big endian
     return crcle[2:4] + crcle[0:2]
 
+
 class Virginizer(gui.QDialog):
     def __init__(self):
         super(Virginizer, self).__init__()
         self.clio_eps = ecu.Ecu_file(ecufile, True)
         layout = gui.QVBoxLayout()
-        infos = gui.QLabel(_("Modus/Clio III EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+        infos = gui.QLabel(
+            _("Modus/Clio III EPS VIRGINIZER<br><font color='red'>THIS PLUGIN WILL RESET EPS IMMO DATA<br>GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("BLANK STATUS & VIN READ"))
         self.status_check = gui.QLabel(_("Waiting"))
@@ -106,8 +111,8 @@ class Virginizer(gui.QDialog):
         self.start_diag_session()
         self.read_vin()
         virigin_check_request = self.clio_eps.requests[u'RDBLI - System Frame']
-        virgin_check_values = virigin_check_request.send_request({}, "62 01 64 00 00 00 00 00 00 00 00 00 00 00 00 "\
-                                                                 "00 00 00 00 00 00 00 00 00")
+        virgin_check_values = virigin_check_request.send_request({}, "62 01 64 00 00 00 00 00 00 00 00 00 00 00 00 " \
+                                                                     "00 00 00 00 00 00 00 00 00")
 
         if virgin_check_values is not None:
             virgin_status = virgin_check_values[u"Dongle status"]

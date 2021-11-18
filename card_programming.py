@@ -5,8 +5,9 @@
 # This is an example plugin
 
 
-import PyQt5.QtWidgets as gui
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+
 import ecu
 import options
 
@@ -60,6 +61,7 @@ def a8(isk_c):
         apv += hex(int(base[i * 8:i * 8 + 8], 2))[2:].zfill(2).upper() + ' '
 
     return apv
+
 
 def a8_2(isk_c):
     '''MC9S12DG256 (algo2)(Megane 2, Scenic 2)'''
@@ -281,6 +283,7 @@ class CardProg(gui.QDialog):
             print("SdS stream", sds_stream)
             return
         options.elm.start_session_can(sds_stream)
+
 
 def plugin_entry():
     cp = CardProg()

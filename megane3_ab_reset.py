@@ -2,8 +2,9 @@
 
 # (c) 2017
 
-import PyQt5.QtWidgets as gui
 import PyQt5.QtCore as core
+import PyQt5.QtWidgets as gui
+
 import ecu
 import options
 
@@ -14,14 +15,15 @@ category = _("Airbag Tools")
 need_hw = True
 ecufile = "MRSZ_X95_L38_L43_L47_20110505T101858"
 
+
 class Virginizer(gui.QDialog):
     def __init__(self):
         super(Virginizer, self).__init__()
         self.airbag_ecu = ecu.Ecu_file(ecufile, True)
         layout = gui.QVBoxLayout()
         infos = gui.QLabel(_("Megane III<br>"
-                           "AIRBAG VIRGINIZER<br><font color='red'>THIS PLUGIN WILL UNLOCK AIRBAG CRASH DATA<br>"
-                           "GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
+                             "AIRBAG VIRGINIZER<br><font color='red'>THIS PLUGIN WILL UNLOCK AIRBAG CRASH DATA<br>"
+                             "GO AWAY IF YOU HAVE NO IDEA OF WHAT IT MEANS</font>"))
         infos.setAlignment(core.Qt.AlignHCenter)
         check_button = gui.QPushButton(_("Check ACU Virgin"))
         self.status_check = gui.QLabel(_("Waiting"))
