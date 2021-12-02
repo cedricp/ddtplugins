@@ -175,7 +175,7 @@ class CardProg(gui.QDialog):
         self.tester_timer.start()
 
     def calculate_pin(self):
-        ISK = str(self.iskoutput.text().toAscii())
+        ISK = ''.join(str(ord(c)) for c in str(self.iskoutput.text()))
         if len(ISK) == 12:
             if self.algocheck.checkState():
                 PIN = a8_2(ISK)
@@ -225,7 +225,7 @@ class CardProg(gui.QDialog):
         self.check_num_key_learnt()
 
     def set_apv_from_input(self):
-        apv = str(self.pininput.text().toAscii())
+        apv = ''.join(str(ord(c)) for c in str(self.pininput.text()))
         if len(apv) != 12:
             return
         self.after_sale_request.send_request({u'Code APV': apv})
