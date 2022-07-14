@@ -4,8 +4,9 @@
 
 from binascii import unhexlify
 
-import PyQt5.QtCore as core
-import PyQt5.QtWidgets as gui
+from PySide2 import QtCore as core
+from PySide2 import QtWidgets as gui
+
 import crcmod
 
 import ecu
